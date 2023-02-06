@@ -144,7 +144,7 @@ public class BlinkingLightsMechanic : MonoBehaviour
             {
                 buttonAudioSource.clip = buttonClick;
                 buttonAudioSource.Play();
-                StartCoroutine(StartPattern(waitTimeBetweenPatterns));
+                StartCoroutine(StartPattern());
             }
 
             if (hit.transform.gameObject == resetPart && !isClicked && !isDone)
@@ -272,7 +272,13 @@ public class BlinkingLightsMechanic : MonoBehaviour
         isClicked = false;
     }
 
-    public IEnumerator StartPattern(float waitForNewPattern)
+    /// <summary>
+    /// Enables and disables the right shape and continent of the earth
+    /// to lit up in the specified sequence and color.
+    /// </summary>
+    /// <param name="waitForNewPattern"></param>
+    /// <returns></returns>
+    public IEnumerator StartPattern()
     {
         meshRenderer.material = runningMaterial;
 
@@ -283,15 +289,17 @@ public class BlinkingLightsMechanic : MonoBehaviour
             patternRunning = true;
             int randomLight = Random.Range(0, lightMaterials.Length);
             yield return new WaitForSeconds(inBetweenLampSwitchTime / 2);
+
             colorBlindShapes[randomLight].sprite = blinkingLightData.colorBlindShapes[colorCodeINT];
-            colorBlindShapes[randomLight].transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = blinkingLightData.colorBlindShapes[colorCodeINT];
+            colorBlindShapes[randomLight].transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = 
+                blinkingLightData.colorBlindShapes[colorCodeINT];
             colorBlindShapes[randomLight].gameObject.SetActive(true);
             lightMaterials[randomLight].SetColor("_EmissionColor", emissionColor);
             lightMaterials[randomLight].EnableKeyword("_EMISSION");
             yield return new WaitForSeconds(inBetweenLampSwitchTime);
+
             lightMaterials[randomLight].DisableKeyword("_EMISSION");
             colorBlindShapes[randomLight].gameObject.SetActive(false);
-            //yield return new WaitForSeconds(inBetweenLampSwitchTime / 2);
         }
 
         patternRunning = false;
